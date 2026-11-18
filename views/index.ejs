@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f3f0e8">
+  <title>Ink &amp; Ivory — Blog</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles/main.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="Ink and Ivory home">
+      <span class="brand-mark">I</span>
+      <span>Ink &amp; Ivory</span>
+    </a>
+    <nav class="header-actions" aria-label="Primary navigation">
+      <a class="nav-link active" href="/">Stories</a>
+      <a class="nav-link" href="/new">Write</a>
+    </nav>
+  </header>
+
+  <main class="page-shell">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">The story desk</p>
+        <h1>Ideas worth<br><em>reading.</em></h1>
+      </div>
+      <a class="button button-primary" href="/new">
+        <span aria-hidden="true">＋</span> New story
+      </a>
+    </section>
+
+    <% if (typeof apiError !== "undefined" && apiError) { %>
+      <aside class="notice" role="alert">
+        <strong>The story desk could not be reached.</strong>
+        <span>Check that the posts API is running, then refresh the page.</span>
+      </aside>
+    <% } %>
+
+    <section class="stories-section" aria-labelledby="stories-heading">
+      <div class="section-heading">
+        <h2 id="stories-heading">Latest stories</h2>
+        <span class="story-count"><%= posts.length %> <%= posts.length === 1 ? "story" : "stories" %></span>
+      </div>
+
+      <% if (posts.length === 0) { %>
+        <div class="empty-state">
+          <div class="empty-icon" aria-hidden="true">✦</div>
+          <h3>Your first story starts here</h3>
+          <p>Share a thought, a lesson, or a little piece of the world.</p>
+          <a class="button button-primary" href="/new">Write a story</a>
+        </div>
+      <% } else { %>
+        <div class="posts-grid" id="postsList">
+          <% posts.forEach((post, index) => { %>
+            <article class="post-card">
+              <div class="post-card-top">
+                <span class="post-number"><%= String(index + 1).padStart(2, "0") %></span>
+                <% if (post.date) { %>
+                  <time><%= post.date %></time>
+                <% } %>
+              </div>
+              <div class="post-card-body">
+                <h3><%= post.title %></h3>
+                <p><%= post.content %></p>
+              </div>
+              <footer class="post-footer">
+                <div class="author">
+                  <span class="avatar"><%= (post.author || "A").charAt(0).toUpperCase() %></span>
+                  <span>By <strong><%= post.author || "Anonymous" %></strong></span>
+                </div>
+                <div class="post-actions">
+                  <a class="icon-button" href="/edit/<%= post.id %>" aria-label="Edit <%= post.title %>" title="Edit">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                  </a>
+                  <a class="icon-button delete" href="/api/posts/delete/<%= post.id %>" aria-label="Delete <%= post.title %>" title="Delete" onclick="return confirm('Delete this story?')">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2m-9 0 1 14h8l1-14M10 10v6M14 10v6"/></svg>
+                  </a>
+                </div>
+              </footer>
+            </article>
+          <% }); %>
+        </div>
+      <% } %>
+    </section>
+  </main>
+</body>
+</html>
